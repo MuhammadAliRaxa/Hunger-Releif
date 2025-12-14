@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_application_1/splash_screen.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter/material.dart';
 
@@ -71,13 +72,15 @@ class _WebPageState extends State<WebPage> {
             child: InAppWebView(
             key: webViewKey,
             initialUrlRequest:
-                URLRequest(url: WebUri("https://hungerreliefafrica.org/")),
+                URLRequest(url: WebUri("https://moxo.mk/")),
             initialSettings: settings,
             pullToRefreshController: pullToRefreshController,
             onWebViewCreated: (InAppWebViewController controller) {
               webViewController = controller;
             },
+            onLoadStart: (controller, url) => showDialog(context: context, builder: (context) => Center(child: CircularProgressIndicator(),),),
             onLoadStop: (controller, url) {
+              Navigator.pop(context);
               pullToRefreshController?.endRefreshing();
             },
             onReceivedError: (controller, request, error) {
@@ -88,7 +91,7 @@ class _WebPageState extends State<WebPage> {
                 pullToRefreshController?.endRefreshing();
               }
             },   
-                        ),
+          ),
           )),
     );
   }

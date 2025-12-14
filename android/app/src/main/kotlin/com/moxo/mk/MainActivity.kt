@@ -1,4 +1,4 @@
-package com.hungryreleifafrica.hungryreleifafrica
+package com.moxo.mk
 
 import io.flutter.embedding.android.FlutterActivity
 
