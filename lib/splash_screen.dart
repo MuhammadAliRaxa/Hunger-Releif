@@ -20,7 +20,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
   void init()async{
     await Future.delayed(const Duration(seconds: 3));
-    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => WebViewPage(),));
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => WebPage(),));
   }
 
   @override
