@@ -1,7 +1,6 @@
-import 'dart:io';
+
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter_application_1/splash_screen.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter/material.dart';
 
@@ -24,8 +23,7 @@ class _WebPageState extends State<WebPage> {
     javaScriptCanOpenWindowsAutomatically: true,  
     limitsNavigationsToAppBoundDomains: true,
         javaScriptEnabled: true,
-        userAgent: Platform.isAndroid?'Mozilla/5.0 (Linux; Android 13; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Mobile Safari/537.36':
-        "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) "
+        userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) "
           "AppleWebKit/605.1.15 (KHTML, like Gecko) "
           "Version/16.0 Mobile/15E148 Safari/604.1",
         cacheMode: CacheMode.LOAD_DEFAULT,
