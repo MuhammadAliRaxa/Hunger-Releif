@@ -7,6 +7,14 @@
     <key>NSAllowsArbitraryLoads</key>
     <true/>
 </dict>
+<key>NSCameraUsageDescription</key>
+<string>Camera access required</string>
+
+<key>NSMicrophoneUsageDescription</key>
+<string>Microphone access required</string>
+
+<key>NSPhotoLibraryUsageDescription</key>
+<string>Photo access required</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>

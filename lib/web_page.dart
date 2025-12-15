@@ -1,59 +1,58 @@
+import 'dart:io';
 
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter/material.dart';
 
 
-class WebPage extends StatefulWidget {
-  const WebPage({super.key});
+class WebViewPage extends StatefulWidget {
+  const WebViewPage({super.key});
 
   @override
-  State<WebPage> createState() => _WebPageState();
+  State<WebViewPage> createState() => _WebViewPageState();
 }
 
-class _WebPageState extends State<WebPage> {
-
+class _WebViewPageState extends State<WebViewPage> {
   final GlobalKey webViewKey = GlobalKey();
-
+  
   InAppWebViewController? webViewController;
-  InAppWebViewSettings settings = InAppWebViewSettings(isInspectable: kDebugMode,mediaPlaybackRequiresUserGesture: false,allowsInlineMediaPlayback: true,allowsAirPlayForMediaPlayback: true,geolocationEnabled: true,
-    allowContentAccess: true,
-    supportMultipleWindows: true,  
-    javaScriptCanOpenWindowsAutomatically: true,  
-    limitsNavigationsToAppBoundDomains: true,
-        javaScriptEnabled: true,
-        userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) "
-          "AppleWebKit/605.1.15 (KHTML, like Gecko) "
-          "Version/16.0 Mobile/15E148 Safari/604.1",
-        cacheMode: CacheMode.LOAD_DEFAULT,
-        mixedContentMode: MixedContentMode.MIXED_CONTENT_ALWAYS_ALLOW,);
-  PullToRefreshController? pullToRefreshController;
-  PullToRefreshSettings pullToRefreshSettings = PullToRefreshSettings(
-    color: Colors.blue,
+  InAppWebViewSettings settings = InAppWebViewSettings(
+    useShouldOverrideUrlLoading: true,
+    mediaPlaybackRequiresUserGesture: false,
+    allowsInlineMediaPlayback: true,
+    javaScriptEnabled: true,
+    javaScriptCanOpenWindowsAutomatically: true,
+    useOnDownloadStart: true,
+    useOnLoadResource: true,
+    useShouldInterceptAjaxRequest: true,
+    useShouldInterceptFetchRequest: true,
   );
-  bool pullToRefreshEnabled = true;
 
+  PullToRefreshController? pullToRefreshController;
+  String url = '';
+  double progress = 0;
+  bool isSecure = false;
+  String pageTitle = '';
 
   @override
   void initState() {
     super.initState();
 
-    pullToRefreshController = kIsWeb
-        ? null
-        : PullToRefreshController(
-            settings: pullToRefreshSettings,
-            onRefresh: () async {
-              if (defaultTargetPlatform == TargetPlatform.android) {
-                webViewController?.reload();
-              } else if (defaultTargetPlatform == TargetPlatform.iOS) {
-                webViewController?.loadUrl(
-                    urlRequest:
-                        URLRequest(url: await webViewController?.getUrl()));
-              }
-            },
+    pullToRefreshController = PullToRefreshController(
+      settings: PullToRefreshSettings(
+        color: Colors.blue,
+      ),
+      onRefresh: () async {
+        if (Theme.of(context).platform == TargetPlatform.android) {
+          webViewController?.reload();
+        } else if (Theme.of(context).platform == TargetPlatform.iOS) {
+          webViewController?.loadUrl(
+            urlRequest: URLRequest(url: await webViewController?.getUrl()),
           );
+        }
+      },
+    );
   }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -66,31 +65,85 @@ class _WebPageState extends State<WebPage> {
         }
       },
       child: Scaffold(
-          body: SafeArea(
-            child: InAppWebView(
-            key: webViewKey,
-            initialUrlRequest:
-                URLRequest(url: WebUri("https://moxo.mk/")),
-            initialSettings: settings,
-            pullToRefreshController: pullToRefreshController,
-            onWebViewCreated: (InAppWebViewController controller) {
-              webViewController = controller;
-            },
-            onLoadStart: (controller, url) => showDialog(context: context, builder: (context) => Center(child: CircularProgressIndicator(),),),
-            onLoadStop: (controller, url) {
-              Navigator.pop(context);
-              pullToRefreshController?.endRefreshing();
-            },
-            onReceivedError: (controller, request, error) {
-              pullToRefreshController?.endRefreshing();
-            },
-            onProgressChanged: (controller, progress) {
-              if (progress == 100) {
-                pullToRefreshController?.endRefreshing();
-              }
-            },   
+        
+        body: SafeArea(
+          child: Column(
+            children: [
+              if (progress < 1.0)
+                LinearProgressIndicator(
+                  value: progress,
+                  backgroundColor: Colors.grey[200],
+                ),
+              Expanded(
+                child: InAppWebView(
+                  key: webViewKey,
+                  initialUrlRequest: URLRequest(
+                    url: WebUri('https://moxo.mk'),
+                  ),
+                  initialSettings: settings,
+                  pullToRefreshController: pullToRefreshController,
+                  onWebViewCreated: (controller) {
+                    webViewController = controller;
+                  },
+                  onLoadStart: (controller, url) {
+                    setState(() {
+                      this.url = url.toString();
+                      isSecure = url?.scheme == 'https';
+                    });
+                  },
+                  onLoadStop: (controller, url) async {
+                    pullToRefreshController?.endRefreshing();
+                    setState(() {
+                      this.url = url.toString();
+                    });
+                    
+                    final title = await controller.getTitle();
+                    setState(() {
+                      pageTitle = title ?? '';
+                    });
+                  },
+                  onProgressChanged: (controller, progress) {
+                    if (progress == 100) {
+                      pullToRefreshController?.endRefreshing();
+                    }
+                    setState(() {
+                      this.progress = progress / 100;
+                    });
+                  },
+                  onUpdateVisitedHistory: (controller, url, isReload) {
+                    setState(() {
+                      this.url = url.toString();
+                    });
+                  },
+                  onConsoleMessage: (controller, consoleMessage) {
+                    print('Console: ${consoleMessage.message}');
+                  },
+                  onDownloadStartRequest: (controller, request) async {
+                    print('Download started: ${request.url}');
+                    // Handle download here
+                  },
+                  shouldOverrideUrlLoading: (controller, navigationAction) async {
+                    final uri = navigationAction.request.url;
+                    
+                    // Block specific URLs (example)
+                    if (uri != null && uri.host.contains('example.com')) {
+                      return NavigationActionPolicy.CANCEL;
+                    }
+                    
+                    return NavigationActionPolicy.ALLOW;
+                  },
+                  onReceivedError: (controller, request, error) {
+                    pullToRefreshController?.endRefreshing();
+                  },
+                  onReceivedHttpError: (controller, request, errorResponse) {
+                    pullToRefreshController?.endRefreshing();
+                  },
+                ),
+              ),
+            ],
           ),
-          )),
+        ),
+      ),
     );
   }
 }
