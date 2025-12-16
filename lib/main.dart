@@ -1,9 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/parent_widget.dart';
 import 'package:flutter_application_1/splash_screen.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
+  if (Platform.isIOS) {
+    await InAppWebViewController.setWebContentsDebuggingEnabled(false);
+  }
   runApp(const MyApp());
 }
 

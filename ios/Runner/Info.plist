@@ -2,19 +2,28 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>NSAppTransportSecurity</key>
-<dict>
-    <key>NSAllowsArbitraryLoads</key>
-    <true/>
-</dict>
-<key>NSCameraUsageDescription</key>
-<string>Camera access required</string>
-
-<key>NSMicrophoneUsageDescription</key>
-<string>Microphone access required</string>
-
-<key>NSPhotoLibraryUsageDescription</key>
-<string>Photo access required</string>
+	<!-- CRITICAL: Required for InAppWebView -->
+	<key>io.flutter.embedded_views_preview</key>
+	<true/>
+	
+	<!-- Network Security -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
+	
+	<!-- Permissions -->
+	<key>NSCameraUsageDescription</key>
+	<string>Camera access required</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Microphone access required</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Photo access required</string>
+	
+	<!-- App Info -->
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -37,6 +46,8 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	
+	<!-- UI Configuration -->
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
