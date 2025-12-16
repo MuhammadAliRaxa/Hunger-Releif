@@ -10,6 +10,7 @@ void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   if (!kIsWeb && Platform.isIOS) {
     // This forces the plugin to initialize properly before the app starts
+    await InAppWebViewController.setWebContentsDebuggingEnabled(kIsWeb);
     // Give iOS time to set up WebKit
     await Future.delayed(Duration(milliseconds: 100));
   }
