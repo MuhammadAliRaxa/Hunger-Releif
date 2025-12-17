@@ -58,11 +58,11 @@ class _WebPageState extends State<WebPage> {
             child: InAppWebView(
             key: webViewKey,
             initialUrlRequest:
-                URLRequest(url: Uri.parse("https://hungerreliefafrica.org/")),
+                URLRequest(url: Uri.parse("https://moxo.mk/")),
             pullToRefreshController: pullToRefreshController,
             initialOptions: InAppWebViewGroupOptions(
               ios: IOSInAppWebViewOptions(
-                allowingReadAccessTo: Uri.parse("moxo.mk"),
+                allowingReadAccessTo: Uri.parse("https://moxo.mk"),
               ),
             ),
             onWebViewCreated: (InAppWebViewController controller) {
