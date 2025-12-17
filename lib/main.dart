@@ -1,19 +1,10 @@
 import 'dart:io';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/parent_widget.dart';
 import 'package:flutter_application_1/splash_screen.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
-  if (!kIsWeb && Platform.isIOS) {
-    // This forces the plugin to initialize properly before the app starts
-    await InAppWebViewController.setWebContentsDebuggingEnabled(kIsWeb);
-    // Give iOS time to set up WebKit
-    await Future.delayed(Duration(milliseconds: 100));
-  }
   runApp(const MyApp());
 }
 
